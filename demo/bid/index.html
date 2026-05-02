@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>標案財務健檢 · Demo | numera.studio</title>
+<meta name="description" content="標案財務健檢 Demo · 投標前毛利率、現金流、履約風險評估。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@400;500;700&family=Inter:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --black: #0a0a0a;
+  --ink: #1a1a1a;
+  --gray-900: #2a2a2a;
+  --gray-700: #525252;
+  --gray-500: #888;
+  --gray-300: #d4d4d4;
+  --gray-200: #e8e8e8;
+  --gray-100: #f5f5f5;
+  --gray-50:  #fafafa;
+  --white: #ffffff;
+  --green: #2d6a4f;
+  --green-bg: #e8f5ed;
+  --amber: #b08900;
+  --amber-bg: #fef6dc;
+  --red: #b42318;
+  --red-bg: #fde7e3;
+  --font-display: "Fraunces", "Noto Serif TC", Georgia, serif;
+  --font-sans: "Noto Sans TC", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Inter", monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-sans); background: var(--gray-50); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+
+.demo-banner { background: var(--black); color: var(--white); padding: 10px 20px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-align: center; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.demo-banner .dot { width: 6px; height: 6px; border-radius: 50%; background: #5ce889; display: inline-block; animation: pulse 2s infinite; }
+.demo-banner a { color: var(--white); border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 1px; }
+.demo-banner a:hover { border-color: var(--white); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.app-header { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark { width: 36px; height: 36px; background: var(--black); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-family: var(--font-display); font-weight: 600; font-size: 18px; font-style: italic; }
+.brand-name { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--black); letter-spacing: -0.01em; }
+.brand-sub { font-family: var(--font-mono); font-size: 11px; color: var(--gray-500); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.report-tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--red-bg); color: var(--red); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; font-weight: 500; }
+
+.app-main { max-width: 960px; margin: 0 auto; padding: 32px; }
+@media (max-width: 768px) { .app-main { padding: 20px; } .app-header { padding: 14px 20px; } }
+
+/* 封面 */
+.report-cover { background: var(--white); border: 1px solid var(--gray-200); border-radius: 8px; padding: 60px 48px; margin-bottom: 24px; position: relative; overflow: hidden; }
+.report-cover::before { content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 4px; background: var(--red); }
+.report-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 24px; }
+.report-title { font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px); font-weight: 500; letter-spacing: -0.02em; color: var(--black); line-height: 1.15; margin-bottom: 12px; }
+.report-title em { font-style: italic; color: var(--gray-700); font-weight: 400; }
+.report-subtitle { font-size: 16px; color: var(--gray-700); margin-bottom: 32px; }
+
+.case-meta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding-top: 28px; border-top: 1px solid var(--gray-200); }
+@media (max-width: 600px) { .case-meta { grid-template-columns: 1fr; } }
+.case-meta-item { display: flex; flex-direction: column; gap: 4px; }
+.case-meta-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-500); }
+.case-meta-value { font-size: 15px; color: var(--black); font-weight: 500; }
+
+/* 風險總評(放最重要的位置)*/
+.verdict { background: var(--white); border: 2px solid var(--red); border-radius: 8px; padding: 40px; margin-bottom: 24px; text-align: center; }
+.verdict-tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--red); margin-bottom: 20px; font-weight: 600; }
+.verdict-score-wrap { display: flex; justify-content: center; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+.verdict-score { font-family: var(--font-display); font-size: 96px; font-weight: 500; letter-spacing: -0.04em; color: var(--red); line-height: 1; }
+.verdict-score-max { font-family: var(--font-display); font-size: 36px; color: var(--gray-500); font-weight: 400; }
+.verdict-label { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--black); margin-bottom: 24px; }
+.verdict-recommendation { display: inline-block; padding: 12px 32px; background: var(--red); color: var(--white); border-radius: 999px; font-family: var(--font-display); font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+.verdict-summary { margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--gray-200); font-family: var(--font-serif); font-size: 16px; line-height: 1.8; color: var(--gray-900); text-align: left; max-width: 60ch; margin-left: auto; margin-right: auto; }
+.verdict-summary strong { color: var(--black); font-weight: 600; }
+
+/* 區塊 */
+.report-section { background: var(--white); border: 1px solid var(--gray-200); border-radius: 8px; padding: 40px; margin-bottom: 24px; }
+.section-num { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; color: var(--gray-500); margin-bottom: 12px; }
+.section-title { font-family: var(--font-display); font-size: clamp(22px, 3vw, 30px); font-weight: 500; letter-spacing: -0.02em; color: var(--black); margin-bottom: 8px; }
+.section-title em { font-style: italic; color: var(--gray-700); font-weight: 400; }
+.section-desc { font-size: 14px; color: var(--gray-700); margin-bottom: 28px; }
+
+/* 評分四面向 */
+.dim-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+@media (max-width: 768px) { .dim-grid { grid-template-columns: 1fr; } }
+.dim-card { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 24px; }
+.dim-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.dim-card-title { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--black); }
+.dim-score { font-family: var(--font-display); font-size: 28px; font-weight: 500; line-height: 1; }
+.dim-score.good { color: var(--green); }
+.dim-score.warn { color: var(--amber); }
+.dim-score.danger { color: var(--red); }
+.dim-bar { height: 6px; background: var(--gray-200); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+.dim-bar-fill { height: 100%; border-radius: 999px; transition: width 0.6s; }
+.dim-bar-fill.good { background: var(--green); }
+.dim-bar-fill.warn { background: var(--amber); }
+.dim-bar-fill.danger { background: var(--red); }
+.dim-text { font-size: 13px; line-height: 1.6; color: var(--gray-700); }
+
+/* 毛利試算表 */
+.calc-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 20px; }
+.calc-table th { text-align: left; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-500); padding: 12px 14px; border-bottom: 2px solid var(--ink); font-weight: 500; }
+.calc-table th.right { text-align: right; }
+.calc-table td { padding: 14px; border-bottom: 1px solid var(--gray-100); }
+.calc-table td.right { text-align: right; font-family: var(--font-mono); }
+.calc-table tr.subtotal td { background: var(--gray-50); font-weight: 600; border-bottom: 1px solid var(--gray-300); }
+.calc-table tr.danger-row td { background: var(--red-bg); font-weight: 700; color: var(--red); }
+.calc-table tr.danger-row td.label { color: var(--red); }
+
+.indent { padding-left: 32px !important; color: var(--gray-700); font-size: 13px; }
+
+/* 風險條款列表 */
+.risk-list { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.risk-item { display: flex; gap: 20px; padding: 20px; background: var(--gray-50); border-radius: 8px; border-left: 3px solid var(--gray-300); }
+.risk-item.high { border-left-color: var(--red); background: var(--red-bg); }
+.risk-item.med { border-left-color: var(--amber); background: var(--amber-bg); }
+.risk-item.low { border-left-color: var(--green); background: var(--green-bg); }
+.risk-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--white); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 600; color: var(--black); }
+.risk-item.high .risk-num { color: var(--red); }
+.risk-item.med .risk-num { color: var(--amber); }
+.risk-body { flex: 1; }
+.risk-level { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+.risk-item.high .risk-level { color: var(--red); }
+.risk-item.med .risk-level { color: var(--amber); }
+.risk-item.low .risk-level { color: var(--green); }
+.risk-title { font-family: var(--font-display); font-size: 17px; font-weight: 500; color: var(--black); margin-bottom: 8px; }
+.risk-desc { font-size: 14px; line-height: 1.65; color: var(--gray-900); }
+.risk-suggestion { margin-top: 10px; padding: 10px 14px; background: var(--white); border-radius: 6px; font-size: 13px; color: var(--gray-700); }
+.risk-suggestion strong { color: var(--black); }
+
+/* CTA */
+.cta-footer { background: var(--black); color: var(--white); border-radius: 12px; padding: 48px; text-align: center; margin: 48px 0 32px; }
+.cta-footer-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 16px; }
+.cta-footer-title { font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); font-weight: 400; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 16px; max-width: 24ch; margin-left: auto; margin-right: auto; }
+.cta-footer-title em { font-style: italic; color: var(--gray-500); }
+.cta-footer-sub { font-size: 15px; color: var(--gray-300); margin-bottom: 32px; max-width: 50ch; margin-left: auto; margin-right: auto; }
+.cta-footer-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.cta-btn-white { background: var(--white); color: var(--black); padding: 14px 28px; border-radius: 999px; font-size: 15px; font-weight: 500; transition: transform 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+.cta-btn-white:hover { transform: translateY(-2px); }
+.cta-btn-outline { border: 1px solid var(--gray-700); color: var(--white); padding: 14px 28px; border-radius: 999px; font-size: 15px; font-weight: 500; }
+.cta-btn-outline:hover { background: rgba(255,255,255,0.08); }
+
+.app-footer { text-align: center; padding: 32px 20px; font-family: var(--font-mono); font-size: 11px; color: var(--gray-500); letter-spacing: 0.1em; text-transform: uppercase; }
+
+::selection { background: var(--black); color: var(--white); }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <span class="dot"></span>
+  <span>DEMO 模式 · 案件名稱與所有數字皆為虛構</span>
+  <span style="opacity: 0.5;">|</span>
+  <a href="../../">← 回到主站</a>
+</div>
+
+<header class="app-header">
+  <div class="brand">
+    <div class="brand-mark">N</div>
+    <div>
+      <div class="brand-name">標案財務健檢 · 報告</div>
+      <div class="brand-sub">CASE No. NM-2026-0042</div>
+    </div>
+  </div>
+  <span class="report-tag">⚠ 高風險</span>
+</header>
+
+<main class="app-main">
+
+  <!-- 封面 -->
+  <div class="report-cover">
+    <div class="report-eyebrow">FINANCIAL DUE DILIGENCE</div>
+    <h1 class="report-title">某市政府<br><em>智慧路燈標案</em><br>財務健檢報告</h1>
+    <p class="report-subtitle">投標前風險評估 · 含財務可行性、合約條款、履約能力分析</p>
+
+    <div class="case-meta">
+      <div class="case-meta-item">
+        <span class="case-meta-label">案件編號</span>
+        <span class="case-meta-value">NM-2026-0042</span>
+      </div>
+      <div class="case-meta-item">
+        <span class="case-meta-label">招標單位</span>
+        <span class="case-meta-value">○○市政府智慧城市辦公室</span>
+      </div>
+      <div class="case-meta-item">
+        <span class="case-meta-label">標案金額</span>
+        <span class="case-meta-value">NT$ 8,650 萬</span>
+      </div>
+      <div class="case-meta-item">
+        <span class="case-meta-label">履約期</span>
+        <span class="case-meta-value">18 個月 + 5 年保固</span>
+      </div>
+      <div class="case-meta-item">
+        <span class="case-meta-label">委託公司</span>
+        <span class="case-meta-value">○○智慧科技股份有限公司</span>
+      </div>
+      <div class="case-meta-item">
+        <span class="case-meta-label">交付日</span>
+        <span class="case-meta-value">2026-05-02</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 總體評分(這是賣點)-->
+  <div class="verdict">
+    <div class="verdict-tag">⚠ OVERALL RISK ASSESSMENT</div>
+    <div class="verdict-score-wrap">
+      <div class="verdict-score">2.4</div>
+      <div class="verdict-score-max">/ 5.0</div>
+    </div>
+    <div class="verdict-label">綜合風險評分:高</div>
+    <div class="verdict-recommendation">⚠ 不建議投標(除非條件變更)</div>
+
+    <div class="verdict-summary">
+      <p>
+        本標案<strong>金額看似誘人(8,650 萬)</strong>,但經財務拆解後,<strong>毛利率僅 6.8%</strong>,扣除 5 年保固預期成本後實際淨利率為 <strong>負 1.2%</strong>。
+      </p>
+      <p style="margin-top: 12px;">
+        合約中包含 <strong>履約保證金 10% 共 865 萬</strong>、保留款 5%、以及對廠商極不利的「驗收標準由甲方單方認定」條款。建議若必須投標,<strong>應爭取以下三項條件變更</strong>:(1) 保留款下調至 3%;(2) 驗收標準書面化;(3) 5 年保固改為 3 年。
+      </p>
+    </div>
+  </div>
+
+  <!-- 四大評分面向 -->
+  <div class="report-section">
+    <div class="section-num">01 / DIMENSIONS</div>
+    <h2 class="section-title">四大<em>評分面向</em></h2>
+    <p class="section-desc">每項以 1-5 分評分,加權後得綜合風險指數。</p>
+
+    <div class="dim-grid">
+
+      <div class="dim-card">
+        <div class="dim-card-header">
+          <div class="dim-card-title">財務可行性</div>
+          <div class="dim-score danger">1.8 / 5</div>
+        </div>
+        <div class="dim-bar"><div class="dim-bar-fill danger" style="width: 36%;"></div></div>
+        <div class="dim-text">毛利率僅 6.8%,扣除 5 年保固成本後淨利率轉負。投入產出比偏低。</div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-card-header">
+          <div class="dim-card-title">合約風險</div>
+          <div class="dim-score danger">2.0 / 5</div>
+        </div>
+        <div class="dim-bar"><div class="dim-bar-fill danger" style="width: 40%;"></div></div>
+        <div class="dim-text">履約保證金過高、驗收標準模糊、罰則嚴苛。對廠商不利條款偏多。</div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-card-header">
+          <div class="dim-card-title">履約能力</div>
+          <div class="dim-score warn">3.2 / 5</div>
+        </div>
+        <div class="dim-bar"><div class="dim-bar-fill warn" style="width: 64%;"></div></div>
+        <div class="dim-text">技術可達成,但人力配置吃緊。需外包 35% 工作項目,管理風險中等。</div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-card-header">
+          <div class="dim-card-title">時程合理性</div>
+          <div class="dim-score warn">2.6 / 5</div>
+        </div>
+        <div class="dim-bar"><div class="dim-bar-fill warn" style="width: 52%;"></div></div>
+        <div class="dim-text">18 個月期程偏緊,實際應需 22-24 個月。逾期罰款風險高。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 毛利試算 -->
+  <div class="report-section">
+    <div class="section-num">02 / FINANCIAL BREAKDOWN</div>
+    <h2 class="section-title">毛利<em>試算</em></h2>
+    <p class="section-desc">將標案總金額拆解至成本明細,計算實際毛利與淨利。</p>
+
+    <table class="calc-table">
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th class="right">金額(萬)</th>
+          <th class="right">佔比</th>
+          <th>備註</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="label" style="font-weight: 600;">標案總金額</td>
+          <td class="right" style="font-weight: 600;">8,650</td>
+          <td class="right">100.0%</td>
+          <td style="color: var(--gray-500); font-size: 13px;">招標公告價</td>
+        </tr>
+        <tr>
+          <td class="label">直接材料成本</td>
+          <td class="right">5,820</td>
+          <td class="right">67.3%</td>
+          <td style="color: var(--gray-500); font-size: 13px;">LED 燈具 × 1,200 套 + 控制器</td>
+        </tr>
+        <tr>
+          <td class="indent">LED 燈具(進口)</td>
+          <td class="right">3,480</td>
+          <td class="right">40.2%</td>
+          <td style="color: var(--gray-500); font-size: 13px;">預估匯率風險 ±5%</td>
+        </tr>
+        <tr>
+          <td class="indent">智慧控制器</td>
+          <td class="right">1,560</td>
+          <td class="right">18.0%</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="indent">線材與配件</td>
+          <td class="right">780</td>
+          <td class="right">9.0%</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="label">直接人工 + 安裝</td>
+          <td class="right">1,650</td>
+          <td class="right">19.1%</td>
+          <td style="color: var(--gray-500); font-size: 13px;">外包 35% + 自有 65%</td>
+        </tr>
+        <tr>
+          <td class="label">運輸、雜項</td>
+          <td class="right">295</td>
+          <td class="right">3.4%</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="label">營業稅(可扣抵)</td>
+          <td class="right">298</td>
+          <td class="right">3.4%</td>
+          <td style="color: var(--gray-500); font-size: 13px;">5%</td>
+        </tr>
+        <tr class="subtotal">
+          <td class="label">營業毛利</td>
+          <td class="right">587</td>
+          <td class="right">6.8%</td>
+          <td style="font-size: 13px;">⚠ 顯著低於業界 12-18%</td>
+        </tr>
+        <tr>
+          <td class="label">5 年保固預期維修</td>
+          <td class="right">485</td>
+          <td class="right">5.6%</td>
+          <td style="color: var(--red); font-size: 13px;">依過去類似案件估算</td>
+        </tr>
+        <tr>
+          <td class="label">履約保證金資金成本</td>
+          <td class="right">95</td>
+          <td class="right">1.1%</td>
+          <td style="color: var(--gray-500); font-size: 13px;">865 萬 × 18 月 × 利率</td>
+        </tr>
+        <tr>
+          <td class="label">保留款資金成本</td>
+          <td class="right">62</td>
+          <td class="right">0.7%</td>
+          <td style="color: var(--gray-500); font-size: 13px;">5% × 平均積壓 12 月</td>
+        </tr>
+        <tr>
+          <td class="label">營運費用攤提</td>
+          <td class="right">48</td>
+          <td class="right">0.6%</td>
+          <td></td>
+        </tr>
+        <tr class="danger-row">
+          <td class="label">實際淨利(預估)</td>
+          <td class="right">-103</td>
+          <td class="right">-1.2%</td>
+          <td style="font-size: 13px;">⚠ 預估虧損</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 高風險條款 -->
+  <div class="report-section">
+    <div class="section-num">03 / CONTRACT RISKS</div>
+    <h2 class="section-title">合約<em>高風險條款</em></h2>
+    <p class="section-desc">逐條檢視招標文件後,標記出對廠商不利的關鍵條款。</p>
+
+    <div class="risk-list">
+
+      <div class="risk-item high">
+        <div class="risk-num">1</div>
+        <div class="risk-body">
+          <div class="risk-level">▲ 高風險</div>
+          <div class="risk-title">履約保證金 10%(共 865 萬)</div>
+          <div class="risk-desc">
+            業界一般為 5-7%,此案要求 10%,將佔用大量周轉金 18 個月。期間若有任何違約爭議,可能被沒入。
+          </div>
+          <div class="risk-suggestion">
+            <strong>建議:</strong>爭取調降至 5%,或改為履約保證保險(成本約 3.5/千),可省下約 800 萬周轉金與 95 萬資金成本。
+          </div>
+        </div>
+      </div>
+
+      <div class="risk-item high">
+        <div class="risk-num">2</div>
+        <div class="risk-body">
+          <div class="risk-level">▲ 高風險</div>
+          <div class="risk-title">驗收標準由甲方單方認定</div>
+          <div class="risk-desc">
+            合約第 12 條 1 項:「乙方所提供之標的物,須經甲方認可方為合格。」此種模糊條款歷史上常造成驗收爭議,使尾款被無限期拖延。
+          </div>
+          <div class="risk-suggestion">
+            <strong>建議:</strong>爭取於合約附件中明確列出量化驗收標準(如照度 ≥ 標準值 ±5%、故障率 ≤ 3% 等),並要求第三方公正單位檢測。
+          </div>
+        </div>
+      </div>
+
+      <div class="risk-item high">
+        <div class="risk-num">3</div>
+        <div class="risk-body">
+          <div class="risk-level">▲ 高風險</div>
+          <div class="risk-title">5 年保固期 + 24 小時到場</div>
+          <div class="risk-desc">
+            5 年保固在 LED 路燈標案中偏長(業界一般 2-3 年),且要求 24 小時內到場處理故障,將造成長期人力壓力與不確定維修成本。
+          </div>
+          <div class="risk-suggestion">
+            <strong>建議:</strong>爭取改為 3 年保固 + 48 小時到場;或保留 5 年但要求每年定期保養合約另計。
+          </div>
+        </div>
+      </div>
+
+      <div class="risk-item med">
+        <div class="risk-num">4</div>
+        <div class="risk-body">
+          <div class="risk-level">⚠ 中風險</div>
+          <div class="risk-title">逾期罰款每日 0.3%</div>
+          <div class="risk-desc">
+            每日罰款 25.95 萬(0.3% × 8,650 萬),違約上限為合約總金額的 20%(1,730 萬)。考量本案時程偏緊,逾期風險中度偏高。
+          </div>
+          <div class="risk-suggestion">
+            <strong>建議:</strong>於投標時先提報「合理時程」備查;爭取罰款下調至 0.1%/日;將總罰款上限調至 10%。
+          </div>
+        </div>
+      </div>
+
+      <div class="risk-item med">
+        <div class="risk-num">5</div>
+        <div class="risk-body">
+          <div class="risk-level">⚠ 中風險</div>
+          <div class="risk-title">付款條件:完工 + 驗收後 60 天</div>
+          <div class="risk-desc">
+            無分期付款,須等全案完工驗收後方能請款,造成 18 個月幾乎全程墊款。
+          </div>
+          <div class="risk-suggestion">
+            <strong>建議:</strong>爭取分階段請款(如完成 30%、60%、90% 各請款一次),減少資金壓力與保留款積壓時間。
+          </div>
+        </div>
+      </div>
+
+      <div class="risk-item low">
+        <div class="risk-num">6</div>
+        <div class="risk-body">
+          <div class="risk-level">○ 低風險</div>
+          <div class="risk-title">智財權歸甲方所有</div>
+          <div class="risk-desc">
+            合約第 18 條:本案所衍生之軟體、設計圖等智財權均歸甲方。但此標案為標準 LED 燈具安裝,並無新研發成份,影響有限。
+          </div>
+          <div class="risk-suggestion">
+            <strong>建議:</strong>可接受。但如未來欲將相同方案推銷其他客戶,應於合約中保留「衍生改作權」。
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 結論建議 -->
+  <div class="report-section">
+    <div class="section-num">04 / RECOMMENDATION</div>
+    <h2 class="section-title">綜合<em>建議</em></h2>
+    <p class="section-desc">基於上述分析,以下為審查師最終建議。</p>
+
+    <div style="background: var(--red-bg); border-left: 4px solid var(--red); padding: 28px 32px; border-radius: 4px; margin-top: 16px;">
+      <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); font-weight: 600; margin-bottom: 12px;">FINAL VERDICT</div>
+      <div style="font-family: var(--font-display); font-size: 22px; color: var(--black); font-weight: 500; margin-bottom: 16px;">
+        ⚠ 不建議直接投標
+      </div>
+      <div style="font-family: var(--font-serif); font-size: 16px; line-height: 1.8; color: var(--gray-900);">
+        本案財務面已預估虧損 103 萬,且合約條款對廠商不利,如直接投標得標將形成「越做越賠」的局面。建議:
+        <ol style="margin: 16px 0 0 24px; padding: 0;">
+          <li style="margin-bottom: 10px;">先以「條件投標」方式投標,於投標書中註明對 5 項高風險條款的調整需求。</li>
+          <li style="margin-bottom: 10px;">若甲方堅持原條款不變,則放棄投標,將資源投入其他案件。</li>
+          <li>若仍欲爭取,投標金額應爭取提高至 9,800 萬以上才有合理利潤。</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-footer">
+    <div class="cta-footer-eyebrow">這是您看到的 DEMO</div>
+    <h2 class="cta-footer-title">投標前 <em>3 天</em>,<br>避免百萬虧損</h2>
+    <p class="cta-footer-sub">
+      上面是虛構案件的範例分析。實際服務中,平均每 4 件案子可救出 1 件「看似賺錢實際虧錢」的標案。標準版 NT$ 15,000 / 件,3 個工作天交報告。
+    </p>
+    <div class="cta-footer-btns">
+      <a href="../../#contact" class="cta-btn-white">預約免費諮詢 →</a>
+      <a href="../../#products" class="cta-btn-outline">看其他產品</a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="app-footer">
+  numera.studio · 中小企業財會數位轉型 · DEMO v1.0
+</footer>
+
+</body>
+</html>
