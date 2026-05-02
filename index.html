@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- ============ SEO 設定(請依實際資訊修改)============ -->
-<title>黃志良 | 中小企業財會數位轉型顧問</title>
+<title>數繹工作室 | 中小企業財會數位轉型顧問</title>
 <meta name="description" content="專為沒有 IT 部門的中小企業,將財務、預算、報表流程從 Excel 苦工升級為自動化儀表板與即時通知。會計人懂的,我們也懂。">
 <meta name="keywords" content="中小企業, 財務數位轉型, 預算管理, 應收帳款, 主管報表, AI 自動化, 儀表板, Power BI, Power Automate">
 <meta property="og:title" content="中小企業財會數位轉型顧問">
@@ -32,6 +32,10 @@
   --gray-50:  #fafafa;
   --white: #ffffff;
   --accent: #0a0a0a; /* 強調色就是黑 */
+  --teal: #00ACB6;
+  --teal-dark: #008891;
+  --teal-light: #e0f7f8;
+  --teal-mid: rgba(0,172,182,0.12);
 
   /* === 字型 === */
   --font-display: "Fraunces", "Noto Serif TC", Georgia, serif;
@@ -94,16 +98,113 @@ section {
   font-weight: 600;
   font-size: 18px;
   letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
+.logo img {
+  height: 38px;
+  width: auto;
+  display: block;
+  transition: opacity 0.2s;
+}
+.logo:hover img { opacity: 0.85; }
+
 .logo-mark {
   display: inline-block;
   width: 8px; height: 8px;
-  background: var(--black);
+  background: var(--teal);
   border-radius: 50%;
   margin-right: 10px;
   vertical-align: middle;
   margin-bottom: 2px;
 }
+
+/* === 點線面裝飾圖形 === */
+.deco-svg {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Hero 右側大型裝飾 */
+.hero-deco {
+  right: -40px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(300px, 35vw, 520px);
+  opacity: 0.13;
+}
+/* Stats 區小節點裝飾 */
+.stat-deco-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  background: var(--teal);
+  border-radius: 50%;
+  margin-right: 10px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+/* Eyebrow 線段改為青綠 */
+.hero-eyebrow::before,
+.section-eyebrow::before {
+  background: var(--teal);
+}
+/* About logo 容器 */
+.about-logo {
+  margin-bottom: 28px;
+}
+.about-logo img {
+  height: 32px;
+  width: auto;
+  filter: invert(0);
+  opacity: 0.85;
+}
+/* Teal 強調下劃線 */
+.hero h1 .underline::after {
+  background: var(--teal);
+  opacity: 0.6;
+}
+/* Footer logo */
+.footer-logo img {
+  height: 28px;
+  width: auto;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.footer-logo img:hover { opacity: 1; }
+/* Teal 按鈕點綴 */
+.btn-teal-dot::before {
+  content: "";
+  display: inline-block;
+  width: 7px; height: 7px;
+  background: var(--teal);
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+/* Stats teal border-top */
+.stat {
+  border-top: 2px solid var(--gray-300);
+  padding-top: 28px;
+}
+.stat:first-child { border-top-color: var(--teal); }
+/* Section eyebrow teal dot */
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-500);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+/* Pain number teal on hover */
+.pain-item:hover .pain-num { color: var(--teal); transition: color 0.2s; }
+/* Product card teal tag */
+.product-tag { color: var(--teal); }
 .nav-links {
   display: flex;
   gap: 28px;
@@ -805,9 +906,7 @@ footer {
 <nav class="nav">
   <div class="nav-inner">
     <a href="#top" class="logo">
-      <span class="logo-mark"></span>
-      <!-- 改這裡:工作室名稱(英文小寫較有設計感) -->
-      <span style="font-style:italic;">numera</span><span style="font-weight:400; color:var(--gray-500);">.studio</span>
+      <img src="logo.png" alt="數繹工作室 numera.studio" loading="lazy">
     </a>
     <div class="nav-links">
       <a href="#problem">問題</a>
@@ -821,8 +920,42 @@ footer {
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
-  <div class="container">
-    <div class="hero-eyebrow">FOR SMALL & MID-SIZED BUSINESSES · 2026</div>
+  <div class="container" style="position: relative;">
+
+    <!-- 右側點線面裝飾 SVG -->
+    <svg class="deco-svg hero-deco" viewBox="0 0 520 480" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- 外三角形 -->
+      <polygon points="260,20 480,440 40,440" fill="none" stroke="#00ACB6" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>
+      <!-- 內三角形(旋轉) -->
+      <polygon points="260,110 400,390 120,390" fill="none" stroke="#00ACB6" stroke-width="1" opacity="0.4"/>
+      <!-- 最小三角 -->
+      <polygon points="260,200 340,360 180,360" fill="none" stroke="#00ACB6" stroke-width="0.8" opacity="0.25"/>
+      <!-- 折線(像 logo 裡的 sparkline) -->
+      <polyline points="80,380 140,300 200,340 260,220 320,280 380,180 440,240" fill="none" stroke="#00ACB6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+      <!-- 折線節點 -->
+      <circle cx="80" cy="380" r="5" fill="#00ACB6" opacity="0.7"/>
+      <circle cx="140" cy="300" r="4" fill="#00ACB6" opacity="0.5"/>
+      <circle cx="200" cy="340" r="4" fill="none" stroke="#00ACB6" stroke-width="1.5" opacity="0.5"/>
+      <circle cx="260" cy="220" r="6" fill="#00ACB6" opacity="0.9"/>
+      <circle cx="320" cy="280" r="4" fill="none" stroke="#00ACB6" stroke-width="1.5" opacity="0.5"/>
+      <circle cx="380" cy="180" r="5" fill="#00ACB6" opacity="0.7"/>
+      <circle cx="440" cy="240" r="4" fill="#00ACB6" opacity="0.4"/>
+      <!-- 柱狀圖(logo 裡的元素) -->
+      <rect x="155" y="350" width="14" height="30" fill="#00ACB6" opacity="0.25" rx="2"/>
+      <rect x="175" y="335" width="14" height="45" fill="#00ACB6" opacity="0.35" rx="2"/>
+      <rect x="195" y="320" width="14" height="60" fill="#00ACB6" opacity="0.2" rx="2"/>
+      <!-- 頂點節點 -->
+      <circle cx="260" cy="20" r="7" fill="#00ACB6" opacity="0.8"/>
+      <circle cx="480" cy="440" r="7" fill="#00ACB6" opacity="0.6"/>
+      <circle cx="40" cy="440" r="7" fill="#00ACB6" opacity="0.6"/>
+      <!-- 散點 -->
+      <circle cx="150" cy="180" r="2.5" fill="#00ACB6" opacity="0.3"/>
+      <circle cx="380" cy="120" r="2" fill="#00ACB6" opacity="0.25"/>
+      <circle cx="80" cy="260" r="2" fill="#00ACB6" opacity="0.2"/>
+      <circle cx="430" cy="320" r="3" fill="#00ACB6" opacity="0.2"/>
+    </svg>
+
+    <div class="hero-eyebrow">FOR SMALL &amp; MID-SIZED BUSINESSES · 2026</div>
     <h1>
       你的數字,<br>
       值得<em>更好的</em><br>
@@ -848,16 +981,25 @@ footer {
 <section class="stats">
   <div class="container">
     <div class="stats-grid">
-      <div class="stat reveal">
-        <div class="stat-number">4<span class="stat-suffix">週交付</span></div>
+      <div class="stat reveal" style="border-top-color: var(--teal);">
+        <div class="stat-number" style="align-items:center;">
+          <span style="display:inline-block;width:8px;height:8px;background:var(--teal);border-radius:50%;margin-right:12px;flex-shrink:0;"></span>
+          4<span class="stat-suffix">週交付</span>
+        </div>
         <div class="stat-label">標準產品從簽約到上線,最快兩週、最慢一個月。</div>
       </div>
       <div class="stat reveal">
-        <div class="stat-number">60<span class="stat-suffix">% 工時節省</span></div>
+        <div class="stat-number" style="align-items:center;">
+          <span style="display:inline-block;width:8px;height:8px;background:var(--teal);border-radius:50%;margin-right:12px;flex-shrink:0;opacity:0.5;"></span>
+          60<span class="stat-suffix">% 工時節省</span>
+        </div>
         <div class="stat-label">會計部每月對帳、做主管報表的時間平均節省幅度。</div>
       </div>
       <div class="stat reveal">
-        <div class="stat-number">10<span class="stat-suffix">+ 年實戰</span></div>
+        <div class="stat-number" style="align-items:center;">
+          <span style="display:inline-block;width:8px;height:8px;background:var(--teal);border-radius:50%;margin-right:12px;flex-shrink:0;opacity:0.3;"></span>
+          10<span class="stat-suffix">+ 年實戰</span>
+        </div>
         <div class="stat-label">大型電信業財務專業背景,熟悉中大型企業的流程嚴謹度。</div>
       </div>
     </div>
@@ -984,6 +1126,10 @@ footer {
     <div class="about-grid">
 
       <div class="about-meta">
+        <!-- Logo 在 About meta 上方 -->
+        <div class="about-logo">
+          <img src="logo.png" alt="數繹工作室">
+        </div>
         <div class="about-meta-item"><span>本業</span><span>大型電信業財務</span></div>
         <div class="about-meta-item"><span>年資</span><span>10+ 年</span></div>
         <div class="about-meta-item"><span>擅長</span><span>標案審查</span></div>
@@ -995,7 +1141,7 @@ footer {
 
       <div class="about-body">
         <p>
-          我是<strong>黃志良</strong>。在台灣大型電信業財務部門服務超過十年,負責企業客戶標案財務審查、預算管理、以及內部系統開發專案。
+          我是<strong>黃志良</strong>,<strong style="color:var(--teal);">數繹工作室</strong>創辦人。在台灣大型電信業財務部門服務超過十年,負責企業客戶標案財務審查、預算管理、以及內部系統開發專案。
         </p>
         <p>
           一般 SI 廠商會寫程式但不懂會計;一般會計師懂帳但不會自動化;市面上的 SaaS 工具又往往是「給歐美中小企業」的設計,完全不適合台灣的單位、報表格式、簽核流程。
@@ -1007,8 +1153,8 @@ footer {
           我做這項服務的初衷很簡單:中小企業也應該擁有像大公司一樣好用的工具。它不該是只屬於上市櫃公司的特權。
         </p>
 
-        <div class="about-quote">
-          「會計人懂的,我們也懂。<br>讓你的數字活起來。」
+        <div class="about-quote" style="border-left-color: var(--teal);">
+          「演繹數據價值,<br>驅動智慧決策。」
         </div>
       </div>
 
@@ -1090,7 +1236,21 @@ footer {
 
 <!-- ============ CTA · 雙保險 ============ -->
 <section class="cta" id="contact">
-  <div class="container">
+  <div class="container" style="position: relative; overflow: hidden;">
+
+    <!-- 黑底上的青綠色點線裝飾 -->
+    <svg style="position:absolute;right:-20px;bottom:-20px;width:320px;opacity:0.1;pointer-events:none;" viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <polygon points="160,10 310,290 10,290" fill="none" stroke="#00ACB6" stroke-width="2"/>
+      <polygon points="160,70 260,270 60,270" fill="none" stroke="#00ACB6" stroke-width="1.2"/>
+      <polyline points="30,270 90,200 150,230 210,140 270,190" fill="none" stroke="#00ACB6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="30" cy="270" r="6" fill="#00ACB6"/>
+      <circle cx="90" cy="200" r="5" fill="#00ACB6"/>
+      <circle cx="150" cy="230" r="5" fill="none" stroke="#00ACB6" stroke-width="2"/>
+      <circle cx="210" cy="140" r="7" fill="#00ACB6"/>
+      <circle cx="270" cy="190" r="5" fill="#00ACB6"/>
+      <circle cx="160" cy="10" r="8" fill="#00ACB6"/>
+    </svg>
+
     <div class="cta-grid">
 
       <!-- 左:文案 + 聯絡方式 -->
@@ -1200,13 +1360,11 @@ footer {
 <!-- ============ FOOTER ============ -->
 <footer>
   <div class="footer-inner">
-    <div>
-      <span class="logo-mark"></span>
-      <span style="font-family: var(--font-display); font-style: italic;">numera</span>.studio
-      &nbsp;·&nbsp; 2026
+    <div class="footer-logo">
+      <img src="logo.png" alt="數繹工作室">
     </div>
-    <div class="footer-meta">
-      MADE FOR TAIWANESE SMBs · v1.0
+    <div class="footer-meta" style="color: var(--gray-500);">
+      數繹工作室 · 2026 · MADE FOR TAIWANESE SMBs
     </div>
   </div>
 </footer>
