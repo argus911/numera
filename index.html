@@ -100,15 +100,59 @@ section {
   letter-spacing: -0.02em;
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 14px;
+  text-decoration: none;
 }
 .logo img {
   height: 38px;
   width: auto;
   display: block;
   transition: opacity 0.2s;
+  flex-shrink: 0;
 }
 .logo:hover img { opacity: 0.85; }
+
+/* logo 右側分隔線 */
+.logo-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--gray-300);
+  flex-shrink: 0;
+}
+/* logo 右側文字組 */
+.logo-wordmark {
+  display: flex;
+  align-items: baseline;
+  line-height: 1;
+  user-select: none;
+}
+.logo-wordmark-main {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 21px;
+  color: var(--black);
+  letter-spacing: -0.03em;
+}
+.logo-wordmark-dot {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 21px;
+  color: var(--gray-400, #aaa);
+  letter-spacing: 0;
+}
+.logo-wordmark-suffix {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 300;
+  font-size: 21px;
+  color: var(--gray-400, #aaa);
+  letter-spacing: 0;
+}
+@media (max-width: 520px) {
+  .logo-wordmark, .logo-divider { display: none; }
+}
 
 .logo-mark {
   display: inline-block;
@@ -906,7 +950,11 @@ footer {
 <nav class="nav">
   <div class="nav-inner">
     <a href="#top" class="logo">
-      <img src="logo.png" alt="數繹工作室 numera.studio" loading="lazy">
+      <img src="logo.png" alt="數繹工作室" loading="lazy">
+      <span class="logo-divider"></span>
+      <span class="logo-wordmark">
+        <span class="logo-wordmark-main">numera</span><span class="logo-wordmark-dot">.</span><span class="logo-wordmark-suffix">studio</span>
+      </span>
     </a>
     <div class="nav-links">
       <a href="#problem">問題</a>
