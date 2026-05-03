@@ -943,66 +943,161 @@ footer {
 /* Selection */
 ::selection { background: var(--black); color: var(--white); }
 
-/* === 增強動畫系統 === */
+/* ════════════════════════════════════════════════════════
+   ANIMATION SYSTEM v2.1  ·  black-white minimal edition
+   ════════════════════════════════════════════════════════ */
 
-/* 交錯延遲 (by data-stagger) */
-[data-stagger="1"] { transition-delay: 0.08s; }
-[data-stagger="2"] { transition-delay: 0.16s; }
-[data-stagger="3"] { transition-delay: 0.24s; }
-[data-stagger="4"] { transition-delay: 0.32s; }
-[data-stagger="5"] { transition-delay: 0.40s; }
-[data-stagger="6"] { transition-delay: 0.48s; }
+/* ── 進場：Hero 裝飾 SVG 淡入 (統一由 flow CSS 管理) ── */
 
-/* 水平滑入變體 */
-.reveal-left {
-  opacity: 0;
-  transform: translateX(-32px);
-  transition: opacity 0.85s ease, transform 0.85s ease;
-}
-.reveal-right {
-  opacity: 0;
-  transform: translateX(32px);
-  transition: opacity 0.85s ease, transform 0.85s ease;
-}
-.reveal-left.visible,
-.reveal-right.visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* 產品卡片同時保留 hover 背景過渡 */
-.product.reveal {
-  transition: opacity 0.8s ease, transform 0.8s ease, background 0.3s, color 0.3s;
-}
-
-/* Nav 捲動陰影 */
-.nav { transition: box-shadow 0.3s ease; }
-.nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.07); }
-
-/* Hero 裝飾 SVG 淡入 */
-@keyframes heroDeco {
-  from { opacity: 0; }
-  to   { opacity: 0.13; }
-}
-.hero-deco { animation: heroDeco 1.5s ease-out 0.5s both; }
-
-/* SVG sparkline 描繪動畫 */
-@keyframes drawSparkline {
-  to { stroke-dashoffset: 0; }
-}
+/* ── Sparkline 折線描繪 (0.7s delay, 1.8s duration) ── */
 .hero-sparkline {
-  stroke-dasharray: 700;
-  stroke-dashoffset: 700;
-  animation: drawSparkline 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
+  stroke-dasharray: 620;
+  stroke-dashoffset: 620;
+  animation: sparkDraw 1.8s cubic-bezier(0.25,0.46,0.45,0.94) 0.7s forwards;
+}
+@keyframes sparkDraw { to { stroke-dashoffset: 0; } }
+
+/* ── Nav 捲動陰影 ── */
+.nav { transition: box-shadow 0.3s ease; }
+.nav.nav-scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+
+/* ── Section 標題三層交錯 ── */
+.s-eyebrow,
+.s-title,
+.s-lead {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.72s cubic-bezier(0.4,0,0.2,1),
+              transform 0.72s cubic-bezier(0.4,0,0.2,1);
+}
+.s-eyebrow.s-in { opacity: 1; transform: translateY(0); }
+.s-title.s-in   { opacity: 1; transform: translateY(0); transition-delay: 0.14s; }
+.s-lead.s-in    { opacity: 1; transform: translateY(0); transition-delay: 0.27s; }
+
+/* ── Eyebrow ::before 線段從 0 生長至 24px ── */
+.s-eyebrow::before {
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.52s cubic-bezier(0.4,0,0.2,1) 0.06s;
+}
+.s-eyebrow.s-in::before { transform: scaleX(1); }
+
+/* ── Stats 數字 ── */
+.s-stat {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.s-stat.s-in { opacity: 1; transform: translateY(0); }
+
+/* ── Pain items 交錯 ── */
+.s-pain {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.s-pain.s-in { opacity: 1; transform: translateY(0); }
+
+/* ── 產品卡片（完整保留 hover 黑底翻轉）── */
+.s-product {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease,
+              background 0.3s, color 0.3s;
+}
+.s-product.s-in { opacity: 1; transform: translateY(0); }
+
+/* ── About 左右滑入 ── */
+.s-from-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.82s ease, transform 0.82s ease;
+}
+.s-from-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.82s ease, transform 0.82s ease;
+}
+.s-from-left.s-in  { opacity: 1; transform: translateX(0); }
+.s-from-right.s-in { opacity: 1; transform: translateX(0); }
+
+/* ── FAQ 交錯 ── */
+.s-faq {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.s-faq.s-in { opacity: 1; transform: translateY(0); }
+
+
+/* ── 持續線條環繞動畫 ── */
+@keyframes flowAlong {
+  to { stroke-dashoffset: -400; }
+}
+@keyframes flowAlongRev {
+  to { stroke-dashoffset: 400; }
+}
+@keyframes nodePulse {
+  0%, 100% { transform: scale(1);    opacity: 0.65; }
+  50%       { transform: scale(1.85); opacity: 1; }
+}
+@keyframes topVertexPulse {
+  0%, 100% { transform: scale(1);   opacity: 0.8; }
+  50%       { transform: scale(2.2); opacity: 1; }
+}
+@keyframes slowFloat {
+  0%, 100% { transform: translateY(-50%);               }
+  50%       { transform: translateY(calc(-50% - 10px));  }
 }
 
-/* Section eyebrow 線段從 0 生長 */
-.section-eyebrow::before {
-  width: 0;
-  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s;
+/* 外三角：流動虛線 */
+.hero-tri-outer {
+  stroke-dasharray: 32 14;
+  stroke-dashoffset: 0;
+  animation: flowAlong 10s linear infinite;
 }
-.section-eyebrow.visible::before {
-  width: 24px;
+/* 內三角：反向流動 */
+.hero-tri-inner {
+  stroke-dasharray: 20 10;
+  stroke-dashoffset: 0;
+  animation: flowAlongRev 14s linear infinite;
+}
+/* Sparkline 節點脈衝 */
+.n-pulse {
+  transform-origin: center;
+  animation: nodePulse 3.5s ease-in-out infinite;
+}
+.n-pulse.d1 { animation-delay: 0.7s; }
+.n-pulse.d2 { animation-delay: 1.4s; }
+.n-pulse.d3 { animation-delay: 2.1s; }
+/* 頂點大節點特效 */
+.n-apex { transform-origin: center; animation: topVertexPulse 4s ease-in-out infinite; }
+.n-apex.da1 { animation-delay: 1.3s; }
+.n-apex.da2 { animation-delay: 2.6s; }
+/* 整個裝飾 SVG：淡入 + 緩慢浮動 */
+@keyframes herodecoIn {
+  from { opacity: 0; transform: translateY(-50%); }
+  to   { opacity: 0.13; transform: translateY(-50%); }
+}
+.hero-deco {
+  opacity: 0;
+  animation: herodecoIn 0.9s ease-out 0.5s both,
+             slowFloat  7s ease-in-out 1.5s infinite;
+}
+/* ── prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-deco   { animation: none !important; opacity: 0.13 !important; transform: translateY(-50%) !important; }
+  .hero-tri-outer, .hero-tri-inner { animation: none !important; }
+  .n-pulse, .n-apex { animation: none !important; }
+  .hero-sparkline { animation: none !important; stroke-dashoffset: 0 !important; }
+  .s-eyebrow, .s-title, .s-lead,
+  .s-stat, .s-pain, .s-product,
+  .s-from-left, .s-from-right, .s-faq {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 </style>
 </head>
@@ -1035,29 +1130,29 @@ footer {
     <!-- 右側點線面裝飾 SVG -->
     <svg class="deco-svg hero-deco" viewBox="0 0 520 480" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <!-- 外三角形 -->
-      <polygon points="260,20 480,440 40,440" fill="none" stroke="#00ACB6" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>
+      <polygon class="hero-tri-outer" points="260,20 480,440 40,440" fill="none" stroke="#00ACB6" stroke-width="1.5" opacity="0.7"/>
       <!-- 內三角形(旋轉) -->
-      <polygon points="260,110 400,390 120,390" fill="none" stroke="#00ACB6" stroke-width="1" opacity="0.4"/>
+      <polygon class="hero-tri-inner" points="260,110 400,390 120,390" fill="none" stroke="#00ACB6" stroke-width="1" opacity="0.4"/>
       <!-- 最小三角 -->
       <polygon points="260,200 340,360 180,360" fill="none" stroke="#00ACB6" stroke-width="0.8" opacity="0.25"/>
       <!-- 折線(像 logo 裡的 sparkline) -->
       <polyline class="hero-sparkline" points="80,380 140,300 200,340 260,220 320,280 380,180 440,240" fill="none" stroke="#00ACB6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
       <!-- 折線節點 -->
-      <circle cx="80" cy="380" r="5" fill="#00ACB6" opacity="0.7"/>
+      <circle class="n-pulse d1" cx="80" cy="380" r="5" fill="#00ACB6" opacity="0.7"/>
       <circle cx="140" cy="300" r="4" fill="#00ACB6" opacity="0.5"/>
       <circle cx="200" cy="340" r="4" fill="none" stroke="#00ACB6" stroke-width="1.5" opacity="0.5"/>
-      <circle cx="260" cy="220" r="6" fill="#00ACB6" opacity="0.9"/>
+      <circle class="n-pulse" cx="260" cy="220" r="6" fill="#00ACB6" opacity="0.9"/>
       <circle cx="320" cy="280" r="4" fill="none" stroke="#00ACB6" stroke-width="1.5" opacity="0.5"/>
-      <circle cx="380" cy="180" r="5" fill="#00ACB6" opacity="0.7"/>
-      <circle cx="440" cy="240" r="4" fill="#00ACB6" opacity="0.4"/>
+      <circle class="n-pulse d2" cx="380" cy="180" r="5" fill="#00ACB6" opacity="0.7"/>
+      <circle class="n-pulse d3" cx="440" cy="240" r="4" fill="#00ACB6" opacity="0.4"/>
       <!-- 柱狀圖(logo 裡的元素) -->
       <rect x="155" y="350" width="14" height="30" fill="#00ACB6" opacity="0.25" rx="2"/>
       <rect x="175" y="335" width="14" height="45" fill="#00ACB6" opacity="0.35" rx="2"/>
       <rect x="195" y="320" width="14" height="60" fill="#00ACB6" opacity="0.2" rx="2"/>
       <!-- 頂點節點 -->
-      <circle cx="260" cy="20" r="7" fill="#00ACB6" opacity="0.8"/>
-      <circle cx="480" cy="440" r="7" fill="#00ACB6" opacity="0.6"/>
-      <circle cx="40" cy="440" r="7" fill="#00ACB6" opacity="0.6"/>
+      <circle class="n-apex" cx="260" cy="20" r="7" fill="#00ACB6" opacity="0.8"/>
+      <circle class="n-apex da1" cx="480" cy="440" r="7" fill="#00ACB6" opacity="0.6"/>
+      <circle class="n-apex da2" cx="40" cy="440" r="7" fill="#00ACB6" opacity="0.6"/>
       <!-- 散點 -->
       <circle cx="150" cy="180" r="2.5" fill="#00ACB6" opacity="0.3"/>
       <circle cx="380" cy="120" r="2" fill="#00ACB6" opacity="0.25"/>
@@ -1091,24 +1186,24 @@ footer {
 <section class="stats">
   <div class="container">
     <div class="stats-grid">
-      <div class="stat reveal" data-stagger="1" style="border-top-color: var(--teal);">
-        <div class="stat-number" style="align-items:center;">
+      <div class="stat s-stat" data-delay="0" style="border-top-color: var(--teal);">
+        <div class="stat-number" data-target="4" style="align-items:center;">
           <span style="display:inline-block;width:8px;height:8px;background:var(--teal);border-radius:50%;margin-right:12px;flex-shrink:0;"></span>
-          <span class="count-up" data-target="4">4</span><span class="stat-suffix">週交付</span>
+          <span class="n-val">4</span><span class="stat-suffix">週交付</span>
         </div>
         <div class="stat-label">標準產品從簽約到上線,最快兩週、最慢一個月。</div>
       </div>
-      <div class="stat reveal" data-stagger="2">
-        <div class="stat-number" style="align-items:center;">
+      <div class="stat s-stat" data-delay="120">
+        <div class="stat-number" data-target="60" style="align-items:center;">
           <span style="display:inline-block;width:8px;height:8px;background:var(--teal);border-radius:50%;margin-right:12px;flex-shrink:0;opacity:0.5;"></span>
-          <span class="count-up" data-target="60">60</span><span class="stat-suffix">% 工時節省</span>
+          <span class="n-val">60</span><span class="stat-suffix">% 工時節省</span>
         </div>
         <div class="stat-label">會計部每月對帳、做主管報表的時間平均節省幅度。</div>
       </div>
-      <div class="stat reveal" data-stagger="3">
-        <div class="stat-number" style="align-items:center;">
+      <div class="stat s-stat" data-delay="240">
+        <div class="stat-number" data-target="10" style="align-items:center;">
           <span style="display:inline-block;width:8px;height:8px;background:var(--teal);border-radius:50%;margin-right:12px;flex-shrink:0;opacity:0.3;"></span>
-          <span class="count-up" data-target="10">10</span><span class="stat-suffix">+ 年實戰</span>
+          <span class="n-val">10</span><span class="stat-suffix">+ 年實戰</span>
         </div>
         <div class="stat-label">大型電信業財務專業背景,熟悉中大型企業的流程嚴謹度。</div>
       </div>
@@ -1119,35 +1214,35 @@ footer {
 <!-- ============ PAIN POINTS ============ -->
 <section class="pain" id="problem">
   <div class="container">
-    <div class="section-eyebrow reveal">01 / THE PROBLEM</div>
-    <h2 class="section-title reveal" data-stagger="1">如果你<em>每個月</em>都在做<br>同樣的 Excel 苦工——</h2>
-    <p class="section-lead reveal" data-stagger="2">
+    <div class="section-eyebrow s-eyebrow">01 / THE PROBLEM</div>
+    <h2 class="section-title s-title">如果你<em>每個月</em>都在做<br>同樣的 Excel 苦工——</h2>
+    <p class="section-lead s-lead">
       中小企業的財會團隊,被困在無止盡的合併、對帳、複製貼上裡。
       不是因為不努力,而是因為市面上的解決方案,要不是太貴(SI 動輒兩三百萬),要不是太花俏(會計人不會用)。
     </p>
 
     <div class="pain-list">
-      <div class="pain-item reveal" data-stagger="1">
+      <div class="pain-item s-pain" data-delay="0">
         <div class="pain-num">01</div>
         <div class="pain-text">每月花超過兩天合併 Excel、做主管報表</div>
       </div>
-      <div class="pain-item reveal" data-stagger="2">
+      <div class="pain-item s-pain" data-delay="80">
         <div class="pain-num">02</div>
         <div class="pain-text">預算控管靠人工核對,經常超支才發現</div>
       </div>
-      <div class="pain-item reveal" data-stagger="3">
+      <div class="pain-item s-pain" data-delay="160">
         <div class="pain-num">03</div>
         <div class="pain-text">應收帳款逾期沒人盯,DSO 居高不下</div>
       </div>
-      <div class="pain-item reveal" data-stagger="4">
+      <div class="pain-item s-pain" data-delay="240">
         <div class="pain-num">04</div>
         <div class="pain-text">ERP 報表難看難用,主管想看數字要等彙整</div>
       </div>
-      <div class="pain-item reveal" data-stagger="5">
+      <div class="pain-item s-pain" data-delay="320">
         <div class="pain-num">05</div>
         <div class="pain-text">曾考慮買 Power BI,但找不到人會設計</div>
       </div>
-      <div class="pain-item reveal" data-stagger="6">
+      <div class="pain-item s-pain" data-delay="400">
         <div class="pain-num">06</div>
         <div class="pain-text">投標案不知道毛利,做下去才發現會虧錢</div>
       </div>
@@ -1158,16 +1253,16 @@ footer {
 <!-- ============ PRODUCTS ============ -->
 <section class="products" id="products">
   <div class="container">
-    <div class="section-eyebrow reveal">02 / SOLUTIONS</div>
-    <h2 class="section-title reveal" data-stagger="1">四項<em>標準產品</em>,<br>解決最常見的痛。</h2>
-    <p class="section-lead reveal" data-stagger="2">
+    <div class="section-eyebrow s-eyebrow">02 / SOLUTIONS</div>
+    <h2 class="section-title s-title">四項<em>標準產品</em>,<br>解決最常見的痛。</h2>
+    <p class="section-lead s-lead">
       固定報價、固定工期、固定交付物。我們不開無底洞,規格清楚、責任清楚。
       每項產品都可獨立採購,也可組合使用。
     </p>
 
     <div class="product-list">
 
-      <a href="demo/budget/" class="product reveal" data-stagger="1">
+      <a href="demo/budget/" class="product s-product" data-delay="0">
         <div class="product-tag">產品 A · BUDGET TRACKING</div>
         <h3 class="product-name">預算追蹤儀表板</h3>
         <p class="product-desc">各部門預算 vs 實支即時看板,超支自動推播 Teams / LINE。手機可看、主管即時掌握。</p>
@@ -1181,7 +1276,7 @@ footer {
         </div>
       </a>
 
-      <a href="demo/ar/" class="product reveal" data-stagger="2">
+      <a href="demo/ar/" class="product s-product" data-delay="100">
         <div class="product-tag">產品 B · ACCOUNTS RECEIVABLE</div>
         <h3 class="product-name">應收帳款管家</h3>
         <p class="product-desc">DSO 計算、逾期分級、自動寄催收信給業務與客戶。讓現金流回得快、業務不再裝沒看到。</p>
@@ -1195,7 +1290,7 @@ footer {
         </div>
       </a>
 
-      <a href="demo/report/" class="product reveal" data-stagger="3">
+      <a href="demo/report/" class="product s-product" data-delay="200">
         <div class="product-tag">產品 C · MANAGEMENT REPORT</div>
         <h3 class="product-name">主管月報自動產生器</h3>
         <p class="product-desc">ERP 資料 → AI 撰寫摘要 → 自動產出 PDF 或簡報。不只是數字,還有解讀。</p>
@@ -1209,7 +1304,7 @@ footer {
         </div>
       </a>
 
-      <a href="demo/bid/" class="product reveal" data-stagger="4">
+      <a href="demo/bid/" class="product s-product" data-delay="300">
         <div class="product-tag">產品 D · BID FINANCIAL REVIEW</div>
         <h3 class="product-name">標案財務健檢</h3>
         <p class="product-desc">投標前毛利率、現金流、履約風險評估。3 個工作天交報告,讓你別再簽下會虧錢的合約。</p>
@@ -1230,12 +1325,12 @@ footer {
 <!-- ============ ABOUT ============ -->
 <section class="about" id="about">
   <div class="container">
-    <div class="section-eyebrow reveal">03 / ABOUT</div>
-    <h2 class="section-title reveal" data-stagger="1">為什麼<br>是<em>我</em>?</h2>
+    <div class="section-eyebrow s-eyebrow">03 / ABOUT</div>
+    <h2 class="section-title s-title">為什麼<br>是<em>我</em>?</h2>
 
     <div class="about-grid">
 
-      <div class="about-meta reveal-left">
+      <div class="about-meta s-from-left">
         <!-- Logo 在 About meta 上方 -->
         <div class="about-logo">
           <img src="logo.png" alt="數繹工作室">
@@ -1249,7 +1344,7 @@ footer {
         <div class="about-meta-item"><span>服務</span><span>全台線上 / 中部現場</span></div>
       </div>
 
-      <div class="about-body reveal-right" data-stagger="1">
+      <div class="about-body s-from-right">
         <p>
           我是<strong>黃志良</strong>,<strong style="color:var(--teal);">數繹工作室</strong>創辦人。在台灣大型電信業財務部門服務超過十年,負責企業客戶標案財務審查、預算管理、以及內部系統開發專案。
         </p>
@@ -1275,12 +1370,12 @@ footer {
 <!-- ============ FAQ ============ -->
 <section class="faq" id="faq">
   <div class="container">
-    <div class="section-eyebrow reveal">04 / FAQ</div>
-    <h2 class="section-title reveal" data-stagger="1">常被問到的<em>問題</em>。</h2>
+    <div class="section-eyebrow s-eyebrow">04 / FAQ</div>
+    <h2 class="section-title s-title">常被問到的<em>問題</em>。</h2>
 
     <div class="faq-list">
 
-      <div class="faq-item reveal" data-stagger="1">
+      <div class="faq-item s-faq" data-delay="0">
         <button class="faq-question">
           我們的 ERP 用了很多年,有辦法串接嗎?
           <span class="faq-toggle">+</span>
@@ -1290,7 +1385,7 @@ footer {
         </div>
       </div>
 
-      <div class="faq-item reveal" data-stagger="2">
+      <div class="faq-item s-faq" data-delay="80">
         <button class="faq-question">
           資料安全嗎?會不會被外洩?
           <span class="faq-toggle">+</span>
@@ -1300,7 +1395,7 @@ footer {
         </div>
       </div>
 
-      <div class="faq-item reveal" data-stagger="3">
+      <div class="faq-item s-faq" data-delay="160">
         <button class="faq-question">
           為什麼比 SI 廠便宜這麼多?品質會不會打折?
           <span class="faq-toggle">+</span>
@@ -1310,7 +1405,7 @@ footer {
         </div>
       </div>
 
-      <div class="faq-item reveal" data-stagger="4">
+      <div class="faq-item s-faq" data-delay="240">
         <button class="faq-question">
           開發完之後我們可以自己改嗎?
           <span class="faq-toggle">+</span>
@@ -1320,7 +1415,7 @@ footer {
         </div>
       </div>
 
-      <div class="faq-item reveal" data-stagger="5">
+      <div class="faq-item s-faq" data-delay="320">
         <button class="faq-question">
           如果出問題找得到人嗎?
           <span class="faq-toggle">+</span>
@@ -1330,7 +1425,7 @@ footer {
         </div>
       </div>
 
-      <div class="faq-item reveal" data-stagger="6">
+      <div class="faq-item s-faq" data-delay="400">
         <button class="faq-question">
           可以開立發票嗎?
           <span class="faq-toggle">+</span>
@@ -1365,9 +1460,9 @@ footer {
 
       <!-- 左:文案 + 聯絡方式 -->
       <div>
-        <div class="section-eyebrow" style="color: var(--gray-500);">05 / GET IN TOUCH</div>
-        <h2 class="cta-title reveal">先聊 30 分鐘,<br>看看<em>適不適合</em>。</h2>
-        <p class="cta-sub reveal" data-stagger="1">
+        <div class="section-eyebrow s-eyebrow" style="color: var(--gray-500);">05 / GET IN TOUCH</div>
+        <h2 class="cta-title s-title">先聊 30 分鐘,<br>看看<em>適不適合</em>。</h2>
+        <p class="cta-sub">
           我不會在第一通電話就推銷。先聽你說現在最痛的是什麼,如果我們能幫上忙再談;如果不行,也會誠實告訴你。免費,沒有後續義務。
         </p>
 
@@ -1407,7 +1502,7 @@ footer {
       </div>
 
       <!-- 右:預約表單 -->
-      <div class="form-card reveal-right">
+      <div class="form-card">
         <h3 class="form-title">預約免費諮詢</h3>
         <p class="form-sub">填寫後 1 個工作日內回覆,約定通話時間。</p>
 
@@ -1490,40 +1585,16 @@ document.querySelectorAll('.faq-item').forEach(item => {
   });
 });
 
-// === Nav 捲動陰影 ===
-const nav = document.querySelector('.nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 20);
-}, { passive: true });
-
-// === 數字計數動畫 ===
-function animateCount(el, target) {
-  const duration = 1500;
-  const startTime = performance.now();
-  const update = (now) => {
-    const progress = Math.min((now - startTime) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.round(eased * target);
-    if (progress < 1) requestAnimationFrame(update);
-    else el.textContent = target;
-  };
-  requestAnimationFrame(update);
-}
-
 // === 滾動顯示動畫 ===
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
-      entry.target.querySelectorAll('.count-up').forEach(counter => {
-        animateCount(counter, parseInt(counter.dataset.target, 10));
-      });
-      observer.unobserve(entry.target);
     }
   });
 }, { threshold: 0.15 });
 
-document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 // === 表單處理(Formspree 整合 + 錯誤處理)===
 function handleSubmit(event) {
@@ -1576,6 +1647,87 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     }
   });
 });
+</script>
+
+
+<script>
+/* ════════════════════════════════════════════════════════
+   ANIMATION ENGINE v2.1  ·  black-white minimal edition
+   ════════════════════════════════════════════════════════ */
+
+/* Nav 捲動陰影 */
+(function () {
+  var nav = document.querySelector('.nav');
+  window.addEventListener('scroll', function () {
+    nav.classList.toggle('nav-scrolled', window.scrollY > 20);
+  }, { passive: true });
+}());
+
+/* 數字計數 (cubic ease-out) */
+function animCount(numEl, target, ms) {
+  var nval = numEl.querySelector('.n-val');
+  if (!nval) return;
+  var t0 = performance.now();
+  (function tick(now) {
+    var p  = Math.min((now - t0) / ms, 1);
+    var v  = 1 - Math.pow(1 - p, 3);
+    nval.textContent = Math.round(v * target);
+    if (p < 1) requestAnimationFrame(tick);
+  }(t0));
+}
+
+/* 延遲觸發 */
+function reveal(el, delay) {
+  setTimeout(function () { el.classList.add('s-in'); }, delay || 0);
+}
+
+/* Observer 工廠 */
+function watch(selector, handler, threshold) {
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      handler(e.target);
+      io.unobserve(e.target);
+    });
+  }, { threshold: threshold || 0.12 });
+  document.querySelectorAll(selector).forEach(function (el) { io.observe(el); });
+}
+
+/* Stats + 計數 */
+watch('.s-stat', function (el) {
+  var d   = +el.dataset.delay || 0;
+  reveal(el, d);
+  var num = el.querySelector('[data-target]');
+  if (num) setTimeout(function () { animCount(num, +num.dataset.target, 1400); }, d + 120);
+}, 0.15);
+
+/* Section 標題 — eyebrow 進場觸發 title + lead */
+(function () {
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var ew = e.target;
+      ew.classList.add('s-in');
+      var sec = ew.closest('section') || ew.parentElement;
+      sec.querySelectorAll('.s-title, .s-lead').forEach(function (el) {
+        el.classList.add('s-in');
+      });
+      io.unobserve(ew);
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.s-eyebrow').forEach(function (el) { io.observe(el); });
+}());
+
+/* Pain items */
+watch('.s-pain',     function (el) { reveal(el, +el.dataset.delay || 0); }, 0.08);
+/* Product cards */
+watch('.s-product',  function (el) { reveal(el, +el.dataset.delay || 0); }, 0.08);
+/* About */
+watch('.s-from-left',  function (el) { el.classList.add('s-in'); }, 0.1);
+watch('.s-from-right', function (el) { el.classList.add('s-in'); }, 0.1);
+/* FAQ */
+watch('.s-faq',      function (el) { reveal(el, +el.dataset.delay || 0); }, 0.08);
+
 </script>
 
 </body>
