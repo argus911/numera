@@ -979,6 +979,18 @@ footer {
 .nav { transition: box-shadow 0.3s ease; }
 .nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.07); }
 
+/* 捲動進度線條 */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--teal);
+  z-index: 200;
+  transition: width 0.08s linear;
+  transform-origin: left;
+}
+
 /* Hero 裝飾 SVG 淡入 */
 @keyframes heroDeco {
   from { opacity: 0; }
@@ -1007,6 +1019,8 @@ footer {
 </style>
 </head>
 <body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <!-- ============ NAV ============ -->
 <nav class="nav">
@@ -1490,10 +1504,14 @@ document.querySelectorAll('.faq-item').forEach(item => {
   });
 });
 
-// === Nav 捲動陰影 ===
+// === Nav 捲動陰影 + 捲動進度線條 ===
 const nav = document.querySelector('.nav');
+const scrollProgress = document.getElementById('scrollProgress');
 window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 20);
+  const scrollY = window.scrollY;
+  nav.classList.toggle('scrolled', scrollY > 20);
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  scrollProgress.style.width = (docHeight > 0 ? (scrollY / docHeight) * 100 : 0) + '%';
 }, { passive: true });
 
 // === 數字計數動畫 ===
